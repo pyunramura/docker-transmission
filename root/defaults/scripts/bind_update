@@ -1,0 +1,42 @@
+#!/usr/bin/with-contenv sh
+SERVICE=transmission-daemon
+SETTINGS=/config/settings.json
+PARAM=bind-address-ipv4
+IP=`cat $SETTINGS | jq '.["bind-address-ipv4"]' | sed 's/"//g'`
+VPNADDR=`ifconfig | grep -A 5 "tun" | grep "inet" | cut -f12 -d" " | cut -c6-`
+TRANSPID=`ps -ef | grep -v grep | grep /transmission | wc -l`
+MODCFG=`cat $SETTINGS | sed "s/.*$PARAM.*/    \"$PARAM\"\: \"$VPNADDR\",/g" > temp.json`
+KILLCFG=`cat $SETTINGS | sed "s/.*$PARAM.*/    \"$PARAM\"\: \"127.0.0.1\",/g" > temp.json`
+change_settings () {
+  s6-svc -wD -d /var/run/s6/services/transmission
+  $MODCFG
+  chown abc:abc temp.json
+  mv temp.json /config/settings.json
+  s6-svc -wu -u /var/run/s6/services/transmission
+  break ;
+}
+kill_switch () {
+  s6-svc -wD -d /var/run/s6/services/transmission
+  $KILLCFG
+  chown abc:abc temp.json
+  mv temp.json /config/settings.json
+  s6-svc -wu -u /var/run/s6/services/transmission
+  break ;
+}
+case "$VPN" in
+ "") break ;;
+yes) case "$VPNADDR" in
+    "") echo "[crond[x[c]: [CRIT] !!!VPN tunnel collapsed; kill switch triggered; binding $SERVICE to localhost!!!"    
+        kill_switch ;;
+     *) case "$VPNADDR" in
+        $IP) echo "crond[ =)]: [INFO] everything looks good on this end. happy tidings on those rough seas matey ;)" ;;
+          *) echo "crond[ :|]: [INFO] $PARAM value needs to be changed (from $IP to $VPNADDR)"
+             case "$TRANSPID" in
+            [!0]) echo "crond[ ;(]: [WARN] stopping $SERVICE" ; change_settings ;;
+               *) echo "crond[ :/]: [INFO] $SERVICE not running, no need to stop it" ;;
+  *) break ;;
+esac ;;
+esac ;;
+esac ;;
+esac
+exit 0

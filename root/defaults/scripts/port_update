@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+SERVICE=transmission-daemon
+PARAM=peer-port
+PORT=$(cat /var/run/openvpn/vpn_port)
+case "$PORT_F" in
+     yes) if [ ! "$PORT" = "" ]; then
+          /usr/bin/transmission-remote --port $PORT
+          echo "crond[\o/]: [INFO] job results in $PARAM: $PORT"; else
+          echo "crond[ ;C]: [WARN] forwarding is enabled, check it's accessible by this service"
+          fi ;;
+       *) break ;;
+esac
+exit 0

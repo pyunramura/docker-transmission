@@ -1,0 +1,37 @@
+#!/usr/bin/with-contenv sh
+# Make directories
+mkdir -p \
+	/downloads/complete /downloads/incomplete /watch \
+        /config/scripts
+# Copy tunnel bind scripts if -e VPN=yes
+case "$VPN" in
+     yes) [[ ! -f /config/scripts/init_bind.sh ]] && cp \
+      	  /defaults/scripts/init_bind.sh /config/scripts ;;
+       *) break ;
+esac
+# Copy port forward script if -e VPN=yes
+case "$PORT_F" in
+     yes) [[ ! -f /config/scripts/port_forward.sh ]] && cp \
+          /defaults/scripts/port_forward.sh /config/scripts ;;
+       *) break ;
+esac
+# Replace Transmission Web UI with Combustion if -e NEW_UI=yes
+case "$NEW_UI" in
+     yes) rm -rf /usr/share/transmission/web
+          mv /defaults/combustion /usr/share/transmission/web
+          echo "[cont.init.d] [INFO] -e NEW_UI set; using Combustion UI" ;;
+       *) break ;
+esac
+# Copy config
+[[ ! -f /config/settings.json ]] && cp \
+	/defaults/settings.json /config/settings.json
+# Permissions
+chown  abc:abc \
+	/config/settings.json \
+        /config/scripts \
+	/downloads \
+	/downloads/complete \
+	/downloads/incomplete \
+	/watch
+chmod -R 755 /config/scripts/* 
+chmod -R 744 /defaults/scripts/*

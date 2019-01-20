@@ -1,0 +1,3 @@
+#!/usr/bin/with-contenv sh
+# Regular daily/weekly/monthly cronjobs to run
+/usr/sbin/crond -f -S -l 0 -c /etc/crontabs
