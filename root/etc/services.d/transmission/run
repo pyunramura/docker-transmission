@@ -7,12 +7,12 @@ case "$VPN" in
      "") echo "[services.d] [INFO] -e VPN is not set, VPN not bound to app"
          break ;;
     yes) case "$PORT_F" in
-        "") /config/scripts/init_bind.sh 
+        "") sleep 5; /config/scripts/init_bind.sh 
             echo "[services.d] [INFO] VPN is bound to app; not checking for forwarded ports" ;;
-       yes) /config/scripts/init_bind.sh
-            /config/scripts/port_forward.sh &
+       yes) sleep 5; /config/scripts/init_bind.sh
+            sleep 10; /config/scripts/port_forward.sh &
             echo "[services.d] [INFO] VPN is bound to app; checking for forwarded ports" ;;
-         *) /config/scpripts/update_bind.sh
+         *) sleep 5; /config/scpripts/update_bind.sh
             echo "[services.d] [WARN] VPN is bound to app; -e PORT_FORWARD set incorrectly, defaulting to disabled" ;;
          esac ;;
       *) echo "[services.d] [CRIT] !!! -e VPN is set incorrectly; set -e VPN=yes or leave unset!!!....exiting...."
