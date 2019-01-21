@@ -57,7 +57,7 @@ http://192.168.x.x:80 would show you what's running INSIDE the container on port
   * `-p 9091`  - the default port for the transmission-web UI
   * `-p 51413`  - the default peer port for use in non vpn based port forwarding
   * `-v /config`  - where transmission will store its configuration files and logs
-  * `-v /downloads`   -for your local path for downloaded torrents
+  * `-v /downloads`   - for your local path for downloaded torrents
   * `-v /watch`  - the folder for dropped-in .torrent files to be automatically picked up by transmission
   * `-v vpn_port`  - a docker volume made with `docker create volume` to retrieve the peer port if used with my OpenVPN container
   * `-e GID`  - for GroupID - see below for explanation
@@ -68,7 +68,7 @@ http://192.168.x.x:80 would show you what's running INSIDE the container on port
 
 #### Notes from above
 * The `51413` port-mapping is only useful for peer-peer communication when running standalone, it can be forwarded through your firewall, or UPnP if needed.
-* The default ports are not needed for the `--net=container:openvpn` option, they will be mapped to it instead.
+* The default ports are not needed for the `--net=container:openvpn` option, they will be mapped to it instead. If you are using this option in a docker-compose file it would instead read `network_mode: service:openvpn`. A sample compose file is in the [openvpn](https://github.com/pyunramura/docker-openvpn) repository for reference.
 * The container implements a kill switch to rebind the service to _localhost_ if the vpn tunnel collapses as an additional privacy measure against leaking unwanted data. This is set to run every 10 minutes at default and can be changed if requested.
 
 ## User / Group Identifiers
