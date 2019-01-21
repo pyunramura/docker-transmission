@@ -6,17 +6,17 @@
 case "$VPN" in
      "") echo "[services.d] [INFO] -e VPN is not set, VPN not bound to app"
          break ;;
-    yes) case "$PORT_F" in
-        "") sleep 5; /config/scripts/init_bind.sh 
-            echo "[services.d] [INFO] VPN is bound to app; not checking for forwarded ports" ;;
-       yes) sleep 5; /config/scripts/init_bind.sh
-            sleep 10; /config/scripts/port_forward.sh &
-            echo "[services.d] [INFO] VPN is bound to app; checking for forwarded ports" ;;
-         *) sleep 5; /config/scpripts/update_bind.sh
-            echo "[services.d] [WARN] VPN is bound to app; -e PORT_FORWARD set incorrectly, defaulting to disabled" ;;
-         esac ;;
-      *) echo "[services.d] [CRIT] !!! -e VPN is set incorrectly; set -e VPN=yes or leave unset!!!....exiting...."
+    yes) echo "[services.d] [INFO] VPN is bound to app"
+         sleep 5; /config/scripts/init_bind.sh ;;
+      *) echo "[services.d] [CRIT] -e VPN is set incorrectly; set -e VPN=yes or leave unset....exiting...."
          exit 1 ;;
+esac
+case "$NEW_UI" in
+      "") export TRANSMISSION_WEB_HOME=/usr/share/transmission/web ;;
+     yes) echo "[services.d] [INFO] -e NEW_UI set; using Combustion UI"
+          export TRANSMISSION_WEB_HOME=/app/combustion ;;
+       *) echo "[services.d] [WARN] -e NEW_UI set incorrectly; using Default UI"
+          export TRANSMISSION_WEB_HOME=/usr/share/transmission/web ;;
 esac
 exec \
 	s6-setuidgid abc /usr/bin/transmission-daemon \

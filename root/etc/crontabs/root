@@ -8,5 +8,5 @@
 # run daily blocklist update
 0        3       *       *       *       /defaults/scripts/blocklist_update 2>&1
 # run bind_update and port_update scripts
-*/10     *       *       *       *       /defaults/scripts/bind_update 2>&1
-*/15     *       *       *       *       /defaults/scripts/port_update 2>&1
+*/10     *       *       *       *       /config/scripts/bind_update 2>&1
+*/1      *       *       *       *       /config/scripts/port_update 2>&1

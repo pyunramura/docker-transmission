@@ -13,7 +13,9 @@ change_settings () {
 }
 case "$VPNADDR" in
     "") break ;;
-     *) change_settings
-        echo "[services.d] [INFO] $SERVICE $PARAM was updated to $VPNADDR" ;;
+     *) if [ ! "$VPNADDR" = "$IP" ]; then 
+        change_settings
+        echo "[services.d] [INFO] $SERVICE $PARAM was updated to $VPNADDR"
+        fi ;;
 esac 
 exit 0
